@@ -205,7 +205,7 @@ const Home = () => {
               {/* Placeholder for your image URL */}
               <img
                 className="h-96 w-full flex-none rounded-2xl object-cover shadow-xl lg:aspect-square lg:h-auto lg:max-w-sm"
-                src="../../public/image/view-3d-young-school-student.jpg"
+                src="https://i.ibb.co/VWxSnY51/view-3d-young-school-student.jpg"
                 alt="StudyHive Community"
               />
               <div className="w-full flex-auto">

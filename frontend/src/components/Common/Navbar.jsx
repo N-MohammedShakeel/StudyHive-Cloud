@@ -12,7 +12,7 @@ const Navbar = () => {
         {/* Logo */}
         <div className="flex items-center">
           <a href="/" className="p-1.5">
-            <h2 className="text-2xl font-extrabold text-[var(--text)]">
+            <h2 className="text-3xl font-extrabold text-[var(--text)]">
               Study<span className="text-[var(--primary)]">Hive</span>
             </h2>
           </a>
