@@ -3,9 +3,8 @@ const socketIo = require("socket.io");
 
 const initSocket = (server) => {
   const io = socketIo(server, {
-    cors: { origin: "http://localhost:5173", credentials: true },
+    cors: { origin: process.env.FRONTEND_URL, credentials: true },
   });
-
   io.on("connection", (socket) => {
     console.log("User connected:", socket.id);
 

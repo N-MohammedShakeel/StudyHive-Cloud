@@ -19,7 +19,8 @@ const app = express();
 const server = require("http").createServer(app);
 const io = initSocket(server);
 
-app.use(cors({ origin: "http://localhost:5173", credentials: true }));
+// server.js
+app.use(cors({ origin: process.env.FRONTEND_URL, credentials: true }));
 app.use(express.json({ limit: "10mb" }));
 app.use(express.urlencoded({ limit: "10mb", extended: true }));
 app.use(passport.initialize());
@@ -32,7 +33,7 @@ app.use("/api/user", userRoutes);
 app.use("/api/chat", chatRoutes);
 app.use("/api/files", fileRoutes);
 app.use("/api/meetings", meetingRoutes);
-app.use("/api/ai", aiRoutes);
+// app.use("/api/ai", aiRoutes);
 
 connectDB();
 
