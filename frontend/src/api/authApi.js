@@ -1,5 +1,7 @@
 // frontend/src/api/authApi.js
-const API_URL = "http://localhost:5000/api/auth";
+const API_URL = import.meta.env.VITE_API_URL
+  ? `${import.meta.env.VITE_API_URL}/api/auth`
+  : "https://studyhive-backend.onrender.com/api/auth";
 
 export const signup = async (userData) => {
   const response = await fetch(`${API_URL}/signup`, {

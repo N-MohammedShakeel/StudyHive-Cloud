@@ -1,5 +1,8 @@
 // frontend/src/api/aiApi.js
-const API_URL = "http://localhost:5000/api/ai";
+
+const API_URL = import.meta.env.VITE_API_URL
+  ? `${import.meta.env.VITE_API_URL}/api/ai`
+  : "https://studyhive-backend.onrender.com/api/ai";
 
 export const summarizeContent = async (content) => {
   const token = localStorage.getItem("token");

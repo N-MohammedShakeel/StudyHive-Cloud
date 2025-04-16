@@ -1,5 +1,7 @@
 // frontend/src/api/courseApi.js
-const API_URL = "http://localhost:5000/api/courses";
+const API_URL = import.meta.env.VITE_API_URL
+  ? `${import.meta.env.VITE_API_URL}/api/courses`
+  : "https://studyhive-backend.onrender.com/api/courses";
 
 export const fetchCourses = async () => {
   const token = localStorage.getItem("token");

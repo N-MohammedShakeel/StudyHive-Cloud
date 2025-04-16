@@ -1,5 +1,7 @@
 // frontend/src/api/userApi.js
-const API_URL = "http://localhost:5000/api/user";
+const API_URL = import.meta.env.VITE_API_URL
+  ? `${import.meta.env.VITE_API_URL}/api/user`
+  : "https://studyhive-backend.onrender.com/api/user";
 
 export const getUserProfile = async () => {
   const token = localStorage.getItem("token");

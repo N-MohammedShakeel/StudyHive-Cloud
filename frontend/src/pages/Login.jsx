@@ -26,7 +26,8 @@ const Login = () => {
   };
 
   const handleGoogleLogin = () => {
-    window.location.href = "http://localhost:5000/api/auth/google";
+    window.location.href =
+      "https://studyhive-backend.onrender.com/api/auth/google";
   };
 
   return (
@@ -43,7 +44,7 @@ const Login = () => {
         </div>
 
         {error && (
-          <div className="p-3 bg-[var(--accent30)] text-[var(--text70)] rounded-md text-sm">
+          <div className="p-3 bg-[var(----error-box)] text-[var(--error-text)] rounded-md text-sm">
             {error}
           </div>
         )}

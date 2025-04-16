@@ -1,14 +1,13 @@
+// frontend/src/components/ChatBox.jsx
 import React, { useState, useEffect, useRef } from "react";
 import { MessageSquare, Trash2, Heart } from "lucide-react";
-import io from "socket.io-client";
+import socket from "../socket"; // Import from socket.js
 import {
   getMessages,
   createMessage,
   deleteMessage,
   reactToMessage,
 } from "../api/chatApi";
-
-const socket = io("http://localhost:5000", { withCredentials: true });
 
 const ChatBox = ({ groupId, currentUserId }) => {
   const [messages, setMessages] = useState([]);
@@ -21,7 +20,7 @@ const ChatBox = ({ groupId, currentUserId }) => {
         const fetchedMessages = await getMessages(groupId);
         setMessages(fetchedMessages);
       } catch (error) {
-        console.error(error);
+        console.error("Failed to load messages:", error);
       }
     };
     loadMessages();
@@ -71,7 +70,7 @@ const ChatBox = ({ groupId, currentUserId }) => {
       socket.emit("sendMessage", message);
       setNewMessage("");
     } catch (error) {
-      console.error(error);
+      console.error("Failed to send message:", error);
     }
   };
 
@@ -80,7 +79,7 @@ const ChatBox = ({ groupId, currentUserId }) => {
       await deleteMessage(messageId);
       socket.emit("deleteMessage", { groupId, messageId });
     } catch (error) {
-      console.error(error);
+      console.error("Failed to delete message:", error);
     }
   };
 
@@ -90,7 +89,7 @@ const ChatBox = ({ groupId, currentUserId }) => {
       const data = await reactToMessage(messageId, reaction);
       socket.emit("reactToMessage", { groupId, ...data });
     } catch (error) {
-      console.error(error);
+      console.error("Failed to react to message:", error);
     }
   };
 

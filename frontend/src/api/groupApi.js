@@ -1,5 +1,7 @@
 // frontend/src/api/groupApi.js
-const API_URL = "http://localhost:5000/api/groups";
+const API_URL = import.meta.env.VITE_API_URL
+  ? `${import.meta.env.VITE_API_URL}/api/groups`
+  : "https://studyhive-backend.onrender.com/api/groups";
 
 export const fetchUserGroups = async () => {
   const token = localStorage.getItem("token");

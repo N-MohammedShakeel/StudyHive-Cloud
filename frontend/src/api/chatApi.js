@@ -1,5 +1,7 @@
 // frontend/src/api/chatApi.js
-const API_URL = "http://localhost:5000/api/chat";
+const API_URL = import.meta.env.VITE_API_URL
+  ? `${import.meta.env.VITE_API_URL}/api/chat`
+  : "https://studyhive-backend.onrender.com/api/chat";
 
 export const getMessages = async (groupId) => {
   const token = localStorage.getItem("token");

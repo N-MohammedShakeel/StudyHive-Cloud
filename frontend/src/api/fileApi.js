@@ -1,5 +1,7 @@
 // frontend/src/api/fileApi.js
-const API_URL = "http://localhost:5000/api/files";
+const API_URL = import.meta.env.VITE_API_URL
+  ? `${import.meta.env.VITE_API_URL}/api/files`
+  : "https://studyhive-backend.onrender.com/api/files";
 
 export const getFiles = async (groupId) => {
   const token = localStorage.getItem("token");
