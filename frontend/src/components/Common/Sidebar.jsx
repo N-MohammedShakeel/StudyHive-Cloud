@@ -53,7 +53,7 @@ const Sidebar = ({ isOpen, onToggle }) => {
       <div
         className={`
         fixed top-0 left-0 h-full bg-[var(--bg)] border-[var(--text)] border-r-2 z-30
-        transition-transform duration-300 ease-in-out
+        transition-transform duration-300 ease-in-out mr-2
         ${isOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"}
         w-64
       `}
