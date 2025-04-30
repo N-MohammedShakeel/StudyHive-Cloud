@@ -28,13 +28,16 @@ const GroupRoom = () => {
   const currentUser = JSON.parse(localStorage.getItem("user") || "{}");
   const isHost = group?.host === currentUser.id;
 
-  // Refetch group and members when needed
   const refreshGroupData = async () => {
     setLoading(true);
     try {
       const groups = await fetchUserGroups();
       const foundGroup = groups.find((g) => g._id === id);
-      if (!foundGroup) throw new Error("Group not found");
+      if (!foundGroup) {
+        toast.error("Group no longer exists");
+        navigate("/groups");
+        return;
+      }
       setGroup(foundGroup);
 
       const memberDetails = await getGroupMembers(id);
@@ -54,7 +57,7 @@ const GroupRoom = () => {
   const handleRemoveMember = async (memberId) => {
     try {
       await removeMember(group.groupId, memberId);
-      await refreshGroupData(); // Re-fetch to sync with backend
+      await refreshGroupData();
       toast.success("Member removed successfully");
     } catch (error) {
       toast.error(error.message || "Failed to remove member");
@@ -64,7 +67,7 @@ const GroupRoom = () => {
   const handleBlockMember = async (memberId) => {
     try {
       await blockMember(group.groupId, memberId);
-      await refreshGroupData(); // Re-fetch to sync with backend
+      await refreshGroupData();
       toast.success("Member blocked successfully");
     } catch (error) {
       toast.error(error.message || "Failed to block member");
@@ -74,7 +77,7 @@ const GroupRoom = () => {
   const handleRoleChange = async (memberId, role) => {
     try {
       await updateMemberRole(group.groupId, memberId, role);
-      await refreshGroupData(); // Re-fetch to sync with backend
+      await refreshGroupData();
       toast.success("Member role updated successfully");
     } catch (error) {
       toast.error(error.message || "Failed to update role");
@@ -93,7 +96,7 @@ const GroupRoom = () => {
         isOpen={isSidebarOpen}
         onToggle={() => setIsSidebarOpen(!isSidebarOpen)}
       />
-      <div className="flex-1 lg:pl-64 p-4 sm:p-6 md:p-8">
+      <div className="flex-1 lg:pl-64 p-4 sm:p-6 md:p-8 m-4">
         <div className="max-w-7xl mx-auto">
           <div className="bg-[var(--bg)] rounded-xl border border-[var(--text20)] p-6 mb-6">
             <div className="flex flex-col sm:flex-row justify-between items-center">

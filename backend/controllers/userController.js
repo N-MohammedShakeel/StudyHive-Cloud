@@ -151,37 +151,43 @@ const changePassword = async (req, res) => {
   }
 };
 
-// const deleteAccount = async (req, res) => {
-//   try {
-//     const userId = req.user.id;
-//     const user = await User.findByIdAndDelete(userId);
-//     if (!user) return res.status(404).json({ message: "User not found" });
-//     res.json({ message: "Account deleted successfully" });
-//   } catch (error) {
-//     console.error("Delete Account Error:", error);
-//     res
-//       .status(500)
-//       .json({ message: "Error deleting account", error: error.message });
-//   }
-// };
-
 const deleteAccount = async (req, res) => {
   try {
     const userId = req.user.id;
 
-    // Remove user from all groups
+    // Find and delete groups where the user is the host
+    const hostedGroups = await Group.find({ host: userId });
+    for (const group of hostedGroups) {
+      // Delete associated messages, files, and meetings for the group
+      await Message.deleteMany({ groupId: group._id });
+      const files = await File.find({ groupId: group._id });
+      for (const file of files) {
+        await drive.files.delete({ fileId: file.driveFileId }).catch((err) => {
+          console.warn(
+            `Failed to delete file ${file.driveFileId} from Drive:`,
+            err
+          );
+        });
+        await File.deleteOne({ _id: file._id });
+      }
+      await Meeting.deleteMany({ groupId: group._id });
+      // Delete the group itself
+      await Group.deleteOne({ _id: group._id });
+    }
+
+    // Remove user from other groups where they are a member
     await Group.updateMany(
       { "members.userId": userId },
       { $pull: { members: { userId } } }
     );
 
-    // Delete courses created by the user (no participants field in schema)
+    // Delete courses created by the user
     await Course.deleteMany({ author: userId });
 
-    // Delete events created by the user (no attendees field in schema)
+    // Delete events created by the user
     await Event.deleteMany({ userId });
 
-    // Delete messages created by the user
+    // Delete messages created by the user in other groups
     await Message.deleteMany({ userId });
 
     // Remove reactions by the user from messages
@@ -190,7 +196,7 @@ const deleteAccount = async (req, res) => {
       { $pull: { reactions: { userId } } }
     );
 
-    // Delete files uploaded by the user
+    // Delete files uploaded by the user in other groups
     const files = await File.find({ userId });
     for (const file of files) {
       await drive.files.delete({ fileId: file.driveFileId }).catch((err) => {
@@ -202,7 +208,7 @@ const deleteAccount = async (req, res) => {
       await File.deleteOne({ _id: file._id });
     }
 
-    // Delete meetings created by the user
+    // Delete meetings created by the user in other groups
     await Meeting.deleteMany({ createdBy: userId });
 
     // Delete the user

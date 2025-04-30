@@ -1,6 +1,6 @@
 // frontend/src/components/ChatBox.jsx
 import React, { useState, useEffect, useRef } from "react";
-import { MessageSquare, Trash2, Heart } from "lucide-react";
+import { MessageSquare, Trash2, Heart, Send } from "lucide-react"; // Added Send icon
 import socket from "../socket";
 import {
   getMessages,
@@ -154,14 +154,29 @@ const ChatBox = ({ groupId, currentUserId }) => {
         )}
         <div ref={messagesEndRef} />
       </div>
-      <form onSubmit={handleSendMessage} className="mt-4">
+      <form
+        onSubmit={handleSendMessage}
+        className="mt-4 flex items-center space-x-2"
+      >
         <input
           type="text"
           value={newMessage}
           onChange={(e) => setNewMessage(e.target.value)}
           placeholder="Type your message..."
-          className="w-full px-4 py-2 border border-[var(--text20)] rounded-md focus:ring-[var(--primary)] focus:border-[var(--primary)]"
+          className="flex-1 px-4 py-2 border border-[var(--text20)] rounded-md focus:ring-[var(--primary)] focus:border-[var(--primary)]"
         />
+        <button
+          type="submit"
+          disabled={!newMessage.trim()}
+          className={`p-2 rounded-md flex items-center justify-center ${
+            newMessage.trim
+              ? "bg-[var(--primary)] text-[var(--primarycontrast)] hover:bg-[var(--primary85)]"
+              : "bg-[var(--text20)] text-[var(--text60)] cursor-not-allowed"
+          } transition-colors`}
+          aria-label="Send message"
+        >
+          <Send className="h-5 w-5" />
+        </button>
       </form>
     </div>
   );
