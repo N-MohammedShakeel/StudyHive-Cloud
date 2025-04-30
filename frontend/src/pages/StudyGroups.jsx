@@ -144,8 +144,8 @@ const StudyGroups = () => {
         isOpen={isSidebarOpen}
         onToggle={() => setIsSidebarOpen(!isSidebarOpen)}
       />
-      <div className="flex-1 lg:pl-64 p-4 sm:p-6 md:p-8">
-        <div className="max-w-7xl mx-auto">
+      <div className="flex-1 lg:pl-64 p-4 sm:p-6 md:p-8 m-4">
+        <div className="max-w-7xl mx-auto m-4">
           <div className="flex flex-col sm:flex-row justify-between items-center mb-8 p-5 rounded-xl bg-[var(--bg)] border border-[var(--text20)]">
             <div className="text-center sm:text-left mb-4 sm:mb-0">
               <h1 className="text-2xl sm:text-3xl font-bold text-[var(--text)]">
