@@ -1,6 +1,13 @@
 // backend/controllers/userController.js
 const bcrypt = require("bcrypt");
 const User = require("../models/User");
+const Group = require("../models/Group");
+const Course = require("../models/Course");
+const Event = require("../models/Event");
+const Message = require("../models/Chat");
+const File = require("../models/File");
+const Meeting = require("../models/Meeting");
+const { drive } = require("../config/googleDrive");
 
 const getUserProfile = async (req, res) => {
   try {
@@ -144,12 +151,65 @@ const changePassword = async (req, res) => {
   }
 };
 
+// const deleteAccount = async (req, res) => {
+//   try {
+//     const userId = req.user.id;
+//     const user = await User.findByIdAndDelete(userId);
+//     if (!user) return res.status(404).json({ message: "User not found" });
+//     res.json({ message: "Account deleted successfully" });
+//   } catch (error) {
+//     console.error("Delete Account Error:", error);
+//     res
+//       .status(500)
+//       .json({ message: "Error deleting account", error: error.message });
+//   }
+// };
+
 const deleteAccount = async (req, res) => {
   try {
     const userId = req.user.id;
+
+    // Remove user from all groups
+    await Group.updateMany(
+      { "members.userId": userId },
+      { $pull: { members: { userId } } }
+    );
+
+    // Delete courses created by the user (no participants field in schema)
+    await Course.deleteMany({ author: userId });
+
+    // Delete events created by the user (no attendees field in schema)
+    await Event.deleteMany({ userId });
+
+    // Delete messages created by the user
+    await Message.deleteMany({ userId });
+
+    // Remove reactions by the user from messages
+    await Message.updateMany(
+      { "reactions.userId": userId },
+      { $pull: { reactions: { userId } } }
+    );
+
+    // Delete files uploaded by the user
+    const files = await File.find({ userId });
+    for (const file of files) {
+      await drive.files.delete({ fileId: file.driveFileId }).catch((err) => {
+        console.warn(
+          `Failed to delete file ${file.driveFileId} from Drive:`,
+          err
+        );
+      });
+      await File.deleteOne({ _id: file._id });
+    }
+
+    // Delete meetings created by the user
+    await Meeting.deleteMany({ createdBy: userId });
+
+    // Delete the user
     const user = await User.findByIdAndDelete(userId);
     if (!user) return res.status(404).json({ message: "User not found" });
-    res.json({ message: "Account deleted successfully" });
+
+    res.status(200).json({ message: "Account deleted successfully" });
   } catch (error) {
     console.error("Delete Account Error:", error);
     res
