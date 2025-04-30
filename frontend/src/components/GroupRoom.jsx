@@ -28,32 +28,33 @@ const GroupRoom = () => {
   const currentUser = JSON.parse(localStorage.getItem("user") || "{}");
   const isHost = group?.host === currentUser.id;
 
-  useEffect(() => {
-    const loadGroupAndMembers = async () => {
-      setLoading(true);
-      try {
-        const groups = await fetchUserGroups();
-        const foundGroup = groups.find((g) => g._id === id);
-        if (!foundGroup) throw new Error("Group not found");
-        setGroup(foundGroup);
+  // Refetch group and members when needed
+  const refreshGroupData = async () => {
+    setLoading(true);
+    try {
+      const groups = await fetchUserGroups();
+      const foundGroup = groups.find((g) => g._id === id);
+      if (!foundGroup) throw new Error("Group not found");
+      setGroup(foundGroup);
 
-        const memberDetails = await getGroupMembers(id);
-        setMembers(memberDetails);
-      } catch (error) {
-        toast.error("Failed to load group", error);
-        navigate("/groups");
-      } finally {
-        setLoading(false);
-      }
-    };
-    loadGroupAndMembers();
+      const memberDetails = await getGroupMembers(id);
+      setMembers(memberDetails);
+    } catch (error) {
+      toast.error("Failed to load group", error);
+      navigate("/groups");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    refreshGroupData();
   }, [id, navigate]);
 
   const handleRemoveMember = async (memberId) => {
     try {
-      const updatedGroup = await removeMember(group.groupId, memberId);
-      setGroup(updatedGroup);
-      setMembers(members.filter((m) => m.userId?._id !== memberId));
+      await removeMember(group.groupId, memberId);
+      await refreshGroupData(); // Re-fetch to sync with backend
       toast.success("Member removed successfully");
     } catch (error) {
       toast.error(error.message || "Failed to remove member");
@@ -62,9 +63,8 @@ const GroupRoom = () => {
 
   const handleBlockMember = async (memberId) => {
     try {
-      const updatedGroup = await blockMember(group.groupId, memberId);
-      setGroup(updatedGroup);
-      setMembers(members.filter((m) => m.userId?._id !== memberId));
+      await blockMember(group.groupId, memberId);
+      await refreshGroupData(); // Re-fetch to sync with backend
       toast.success("Member blocked successfully");
     } catch (error) {
       toast.error(error.message || "Failed to block member");
@@ -73,13 +73,8 @@ const GroupRoom = () => {
 
   const handleRoleChange = async (memberId, role) => {
     try {
-      const updatedGroup = await updateMemberRole(
-        group.groupId,
-        memberId,
-        role
-      );
-      setGroup(updatedGroup);
-      setMembers(updatedGroup.members);
+      await updateMemberRole(group.groupId, memberId, role);
+      await refreshGroupData(); // Re-fetch to sync with backend
       toast.success("Member role updated successfully");
     } catch (error) {
       toast.error(error.message || "Failed to update role");
@@ -165,14 +160,15 @@ const GroupRoom = () => {
                 </div>
                 <div className="space-y-4">
                   {members.map((member) => {
-                    if (!member.userId) {
+                    if (!member.userId || !member.userId._id) {
+                      console.warn(`Invalid member data:`, member);
                       return null;
                     }
                     const displayName =
-                      member.userId?.name || member.username || "Unknown";
+                      member.userId.name || member.username || "Unknown";
                     return (
                       <div
-                        key={member._id}
+                        key={member.userId._id}
                         className="flex items-center justify-between"
                       >
                         <div className="flex items-center space-x-3">
@@ -192,43 +188,42 @@ const GroupRoom = () => {
                             </p>
                           </div>
                         </div>
-                        {group.host === currentUser.id &&
-                          member.userId._id !== currentUser.id && (
-                            <div className="flex space-x-2">
-                              <select
-                                value={member.role}
-                                onChange={(e) =>
-                                  handleRoleChange(
-                                    member.userId._id,
-                                    e.target.value
-                                  )
-                                }
-                                className="text-sm border-[var(--text20)] rounded-md focus:ring-[var(--primary)] focus:border-[var(--primary)]"
-                                aria-label={`Change role for ${displayName}`}
-                              >
-                                <option value="moderator">Moderator</option>
-                                <option value="member">Member</option>
-                              </select>
-                              <button
-                                onClick={() =>
-                                  handleRemoveMember(member.userId._id)
-                                }
-                                className="text-sm text-[var(--warning)] hover:text-[var(--warning-text)]"
-                                aria-label={`Remove ${displayName}`}
-                              >
-                                Remove
-                              </button>
-                              <button
-                                onClick={() =>
-                                  handleBlockMember(member.userId._id)
-                                }
-                                className="text-sm text-[var(--error)] hover:text-[var(--error-text)]"
-                                aria-label={`Block ${displayName}`}
-                              >
-                                Block
-                              </button>
-                            </div>
-                          )}
+                        {isHost && member.userId._id !== currentUser.id && (
+                          <div className="flex space-x-2">
+                            <select
+                              value={member.role}
+                              onChange={(e) =>
+                                handleRoleChange(
+                                  member.userId._id,
+                                  e.target.value
+                                )
+                              }
+                              className="text-sm border-[var(--text20)] rounded-md focus:ring-[var(--primary)] focus:border-[var(--primary)]"
+                              aria-label={`Change role for ${displayName}`}
+                            >
+                              <option value="moderator">Moderator</option>
+                              <option value="member">Member</option>
+                            </select>
+                            <button
+                              onClick={() =>
+                                handleRemoveMember(member.userId._id)
+                              }
+                              className="text-sm text-[var(--warning)] hover:text-[var(--warning-text)]"
+                              aria-label={`Remove ${displayName}`}
+                            >
+                              Remove
+                            </button>
+                            <button
+                              onClick={() =>
+                                handleBlockMember(member.userId._id)
+                              }
+                              className="text-sm text-[var(--error)] hover:text-[var(--error-text)]"
+                              aria-label={`Block ${displayName}`}
+                            >
+                              Block
+                            </button>
+                          </div>
+                        )}
                       </div>
                     );
                   })}
