@@ -51,6 +51,15 @@ const StudyGroups = () => {
         ]);
         setUserGroups(userGroupsData);
         setPublicGroups(publicGroupsData);
+        // Log the structure of members and host for debugging
+        publicGroupsData.forEach((group) =>
+          console.log("Group data:", {
+            _id: group._id,
+            name: group.name,
+            members: group.members,
+            host: group.host,
+          })
+        );
       } catch (error) {
         toast.error("Failed to load groups", error);
       } finally {
@@ -137,9 +146,13 @@ const StudyGroups = () => {
         group.name.toLowerCase().includes(searchQuery.trim().toLowerCase()) ||
         group.groupId.includes(searchQuery.trim())
     )
-    .filter(
-      (group) => !group.members.some((member) => member.userId === userId)
-    ); // Filter out groups where user is a member
+    .filter((group) => {
+      const isMember = group.members.some(
+        (member) => member.userId && member.userId.toString() === userId
+      );
+      const isHost = group.host && group.host.toString() === userId;
+      return !isMember && !isHost;
+    }); // Filter out groups where user is a member or host
 
   return (
     <div className="flex min-h-screen bg-[var(--bg)]">
