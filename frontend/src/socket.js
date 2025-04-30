@@ -2,7 +2,7 @@
 import io from "socket.io-client";
 
 const API_URL = import.meta.env.VITE_API_URL
-  ? `${import.meta.env.VITE_API_URL}/api/user`
+  ? import.meta.env.VITE_API_URL
   : "https://studyhive-backend.onrender.com";
 
 const socket = io(API_URL, {
