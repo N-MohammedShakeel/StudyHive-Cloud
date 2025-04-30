@@ -101,7 +101,7 @@ const Courses = () => {
         isOpen={isSidebarOpen}
         onToggle={() => setIsSidebarOpen(!isSidebarOpen)}
       />
-      <div className="flex-1 lg:pl-64 p-4 sm:p-6 md:p-8">
+      <div className="flex-1 lg:pl-64 p-4 sm:p-6 md:p-8 m-4">
         <div className="max-w-7xl mx-auto">
           <div className="mb-8 p-5 flex flex-col sm:flex-row justify-between items-center gap-4 rounded-xl bg-[var(--bg)] border border-[var(--text20)]">
             <div className="text-center sm:text-left">
