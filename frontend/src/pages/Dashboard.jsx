@@ -123,7 +123,7 @@ const Dashboard = () => {
         isOpen={isSidebarOpen}
         onToggle={() => setIsSidebarOpen(!isSidebarOpen)}
       />
-      <div className="flex-1 lg:pl-64 p-4 sm:p-6 md:p-8">
+      <div className="flex-1 lg:pl-64 p-4 sm:p-6 md:p-8 m-4">
         <div className="max-w-7xl mx-auto">
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             <div className="col-span-1 space-y-6">
