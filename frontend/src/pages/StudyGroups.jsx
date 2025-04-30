@@ -51,13 +51,17 @@ const StudyGroups = () => {
         ]);
         setUserGroups(userGroupsData);
         setPublicGroups(publicGroupsData);
-        // Log the structure of members and host for debugging
+        // Enhanced logging for debugging
         publicGroupsData.forEach((group) =>
           console.log("Group data:", {
             _id: group._id,
             name: group.name,
-            members: group.members,
-            host: group.host,
+            members: group.members.map((m) => ({
+              userId: m.userId ? m.userId.toString() : null,
+              role: m.role,
+            })),
+            host: group.host ? group.host.toString() : null,
+            userIdFromLocalStorage: userId,
           })
         );
       } catch (error) {
@@ -151,6 +155,9 @@ const StudyGroups = () => {
         (member) => member.userId && member.userId.toString() === userId
       );
       const isHost = group.host && group.host.toString() === userId;
+      console.log(
+        `Filtering group ${group.name}: isMember=${isMember}, isHost=${isHost}, userId=${userId}`
+      );
       return !isMember && !isHost;
     }); // Filter out groups where user is a member or host
 
