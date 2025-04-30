@@ -131,11 +131,15 @@ const StudyGroups = () => {
     }
   };
 
-  const filteredPublicGroups = publicGroups.filter(
-    (group) =>
-      group.name.toLowerCase().includes(searchQuery.trim().toLowerCase()) ||
-      group.groupId.includes(searchQuery.trim())
-  );
+  const filteredPublicGroups = publicGroups
+    .filter(
+      (group) =>
+        group.name.toLowerCase().includes(searchQuery.trim().toLowerCase()) ||
+        group.groupId.includes(searchQuery.trim())
+    )
+    .filter(
+      (group) => !group.members.some((member) => member.userId === userId)
+    ); // Filter out groups where user is a member
 
   return (
     <div className="flex min-h-screen bg-[var(--bg)]">

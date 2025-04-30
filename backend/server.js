@@ -12,14 +12,16 @@ const userRoutes = require("./routes/userRoutes");
 const chatRoutes = require("./routes/chatRoutes");
 const fileRoutes = require("./routes/fileRoutes");
 const meetingRoutes = require("./routes/meetingRoutes");
-const aiRoutes = require("./routes/aiRoutes");
+// const aiRoutes = require("./routes/aiRoutes");
 const passport = require("./config/authConfig");
 
 const app = express();
 const server = require("http").createServer(app);
 const io = initSocket(server);
 
-// server.js
+// Attach io to app for use in controllers
+app.set("io", io);
+
 app.use(cors({ origin: process.env.FRONTEND_URL, credentials: true }));
 app.use(express.json({ limit: "10mb" }));
 app.use(express.urlencoded({ limit: "10mb", extended: true }));

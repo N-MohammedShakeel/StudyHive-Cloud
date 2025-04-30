@@ -8,6 +8,7 @@ const API_URL = import.meta.env.VITE_API_URL
 const socket = io(API_URL, {
   withCredentials: true,
   auth: { token: localStorage.getItem("token") },
+  path: "/socket.io/",
 });
 
 socket.on("connect", () => console.log("Connected to Socket.IO"));
