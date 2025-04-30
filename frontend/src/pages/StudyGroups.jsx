@@ -158,8 +158,8 @@ const StudyGroups = () => {
       console.log(
         `Filtering group ${group.name}: isMember=${isMember}, isHost=${isHost}, userId=${userId}`
       );
-      return !isMember && !isHost;
-    }); // Filter out groups where user is a member or host
+      return !isMember || !isHost;
+    });
 
   return (
     <div className="flex min-h-screen bg-[var(--bg)]">
