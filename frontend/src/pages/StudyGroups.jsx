@@ -158,7 +158,7 @@ const StudyGroups = () => {
       console.log(
         `Filtering group ${group.name}: isMember=${isMember}, isHost=${isHost}, userId=${userId}`
       );
-      return !isMember || !isHost;
+      return !isMember && !isHost;
     });
 
   return (
