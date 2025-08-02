@@ -764,7 +764,6 @@ const Home = () => {
 
 export default Home;
 
-// I'm thrilled to hear that everything in **StudyHive** is working smoothly! 😊 Since you’ve confirmed the project’s name and that the password flow for Google users is resolved, I’d love to dive into describing **StudyHive** and its features based on what we’ve built together, particularly focusing on the profile management system and other components we’ve discussed. I’ll also weave in some context from your interest in collaborative, user-focused platforms (like your past projects involving React.js and Node.js), ensuring this feels tailored to your vision for **StudyHive**.
 
 // ### What is StudyHive?
 // **StudyHive** is a collaborative learning platform designed to connect students, foster knowledge sharing, and streamline academic workflows. Built with a modern tech stack (React.js for the frontend, Node.js for the backend, and MongoDB for data storage), it’s a vibrant, user-friendly hub where learners can manage their profiles, engage with courses, join study groups, and track events—all with a sleek, responsive interface. The name **StudyHive** evokes a buzzing community of students working together, much like bees in a hive, to achieve their academic goals.
